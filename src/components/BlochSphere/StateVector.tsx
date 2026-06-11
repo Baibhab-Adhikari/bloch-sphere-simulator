@@ -25,7 +25,7 @@ export function StateVector({ position }: StateVectorProps) {
   const glowRef = useRef<THREE.Mesh>(null);
 
   // Compute the direction and length
-  const { direction, length, quaternion } = useMemo(() => {
+  const { length, quaternion } = useMemo(() => {
     const dir = new THREE.Vector3(position.x, position.z, position.y); // Bloch→Three.js mapping
     const len = dir.length();
     const q = new THREE.Quaternion();
@@ -39,7 +39,7 @@ export function StateVector({ position }: StateVectorProps) {
   }, [position.x, position.y, position.z]);
 
   // Animate glow pulsing
-  useFrame((_, delta) => {
+  useFrame(() => {
     if (glowRef.current) {
       const mat = glowRef.current.material as THREE.MeshBasicMaterial;
       const t = (Date.now() % 2000) / 2000;

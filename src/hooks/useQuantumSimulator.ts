@@ -38,7 +38,7 @@ export interface QuantumSimulator {
   applyAllGates: () => { from: QuantumState; to: QuantumState; gateNames: GateName[] } | null;
 
   // Direct state setting (after animation completes)
-  commitState: (state: QuantumState) => void;
+  commitState: (state: QuantumState, label?: string) => void;
 
   // History
   history: HistoryEntry[];

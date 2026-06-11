@@ -3,10 +3,13 @@
  * Provides all arithmetic operations needed for gate matrices and state manipulation.
  */
 export class Complex {
-  constructor(
-    public readonly real: number,
-    public readonly imag: number
-  ) {}
+  public readonly real: number;
+  public readonly imag: number;
+
+  constructor(real: number, imag: number) {
+    this.real = real;
+    this.imag = imag;
+  }
 
   // ─── Static Constructors ─────────────────────────────────────────────────
 
