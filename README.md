@@ -1,73 +1,58 @@
-# React + TypeScript + Vite
+# Quantum Bloch Sphere Simulator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A production-quality, interactive 3D web application for visualizing single-qubit quantum states and operations. Built purely on the frontend, this educational tool allows users to build gate sequences, observe real-time state vector animations, and study the underlying mathematical foundations of quantum computing.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Interactive 3D Bloch Sphere:** Smooth 60 FPS rendering using Three.js and React Three Fiber.
+- **Quantum Gates:** Support for standard single-qubit gates including Pauli-X, Y, Z, Hadamard (H), Phase (S), Pi/8 (T), and √X.
+- **Real-Time Animation:** Watch the state vector smoothly rotate along the surface of the sphere as gates are applied, driven by spherical linear interpolation (slerp) over complex vectors.
+- **Educational Display:** Real-time feedback showing:
+  - Dirac Notation
+  - State Coefficients (α, β)
+  - Measurement Probabilities (|α|², |β|²)
+  - Bloch Coordinates (x, y, z) and angles (θ, φ)
+  - Unitary matrices and physical interpretations for selected gates
+- **History & Playback:** Queue up a sequence of gates, play/pause/restart animations, and jump back in time using the History timeline and Undo functionality.
+- **Premium UI/UX:** A gorgeous "floating panel" layout with a frosted glass aesthetic, custom gradient icons, and extensive spacing for a clutter-free learning environment.
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+This project is a 100% static frontend application. No backend or database is required.
 
-## Expanding the ESLint configuration
+- **Framework:** React 19 + Vite
+- **Language:** TypeScript (Strict Mode)
+- **3D Graphics:** Three.js + `@react-three/fiber`
+- **Styling:** Tailwind CSS v4 + Vanilla CSS Variables
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Getting Started
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Local Development
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+1. Clone the repository.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+4. Open your browser to `http://localhost:5173`.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Production Build
+
+To build the static files for production:
+
+```bash
+npm run build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+This will output the highly optimized static HTML, CSS, and JS files into the `dist/` directory.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Deployment
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Because this is a static frontend application, it can be hosted on any static file server or Edge CDN.
+
+**Vercel (Recommended):**
+Vercel will automatically detect the Vite framework and deploy it with zero configuration. Simply import your GitHub repository into your Vercel dashboard and hit deploy.
