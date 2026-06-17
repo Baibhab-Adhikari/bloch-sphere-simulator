@@ -1,16 +1,32 @@
 /**
  * useAnimation — Animation engine hook.
  *
- * Drives smooth Bloch vector transitions using spherical linear interpolation
- * with cubic ease-in-out easing. Manages play/pause/restart and speed control.
+ * Drives smooth Bloch vector transitions using either:
+ *   1. Rodrigues' rotation (for gate animations — physically correct)
+ *   2. Spherical linear interpolation (for presets/undo/reset — shortest path)
+ *
+ * When rotation metadata (axis + angle) is provided, the animation follows the
+ * true physical rotation arc of the quantum gate. Otherwise, it falls back to
+ * slerp for the shortest great-circle path.
  */
 
 import { useState, useCallback, useRef } from 'react';
 import { slerpBloch } from '../engine/blochMath';
+import { rotateBlochVector } from '../engine/gateRotations';
 import type { AnimationStatus, SpeedMultiplier, BlochCoordinates } from '../types';
 
 /** Base animation duration in milliseconds */
 const BASE_DURATION_MS = 1000;
+
+/** Trail data for rendering the rotation arc on the sphere */
+export interface TrailData {
+  from: BlochCoordinates;
+  to: BlochCoordinates;
+  rotationAxis?: BlochCoordinates;
+  rotationAngle?: number;
+  /** Eased progress [0, 1] — how far along the trail to draw */
+  easedProgress: number;
+}
 
 /** Cubic ease-in-out easing function */
 function easeInOutCubic(t: number): number {
@@ -20,8 +36,14 @@ function easeInOutCubic(t: number): number {
 export interface AnimationConfig {
   from: BlochCoordinates;
   to: BlochCoordinates;
-  onComplete: () => void;
+  onComplete: (() => void) | undefined;
   label?: string;
+
+  // Rotation metadata for physically correct gate animations.
+  // When provided, the animation uses Rodrigues' rotation around this axis.
+  // When absent, the animation falls back to slerp (shortest path).
+  rotationAxis?: BlochCoordinates;
+  rotationAngle?: number;
 }
 
 export interface AnimationControls {
@@ -30,6 +52,9 @@ export interface AnimationControls {
   progress: number;
   speed: SpeedMultiplier;
   currentPosition: BlochCoordinates;
+
+  // Trail data for rendering the rotation arc
+  trailData: TrailData | null;
 
   // Start a new animation
   startAnimation: (config: AnimationConfig) => void;
@@ -52,6 +77,7 @@ export function useAnimation(): AnimationControls {
   const [progress, setProgress] = useState(0);
   const [speed, setSpeedState] = useState<SpeedMultiplier>(1);
   const [currentPosition, setCurrentPosition] = useState<BlochCoordinates>({ x: 0, y: 0, z: 1 });
+  const [trailData, setTrailData] = useState<TrailData | null>(null);
 
   // Use refs for values accessed in the animation loop to avoid stale closures
   const statusRef = useRef<AnimationStatus>('idle');
@@ -69,6 +95,13 @@ export function useAnimation(): AnimationControls {
     setProgress(0);
     setStatus('playing');
     setCurrentPosition(config.from);
+    setTrailData({
+      from: config.from,
+      to: config.to,
+      rotationAxis: config.rotationAxis,
+      rotationAngle: config.rotationAngle,
+      easedProgress: 0,
+    });
   }, []);
 
   const queueAnimations = useCallback((configs: AnimationConfig[]) => {
@@ -121,10 +154,31 @@ export function useAnimation(): AnimationControls {
     const t = progressRef.current;
     const easedT = easeInOutCubic(t);
 
-    // Interpolate position on the Bloch sphere
-    const pos = slerpBloch(config.from, config.to, easedT);
+    // Compute interpolated position
+    let pos: BlochCoordinates;
+
+    if (config.rotationAxis && config.rotationAngle !== undefined) {
+      // ── Gate animation: use Rodrigues' rotation around the physical axis ──
+      pos = rotateBlochVector(
+        config.from,
+        config.rotationAxis,
+        config.rotationAngle,
+        easedT
+      );
+    } else {
+      // ── Fallback: slerp for presets, undo, reset ──
+      pos = slerpBloch(config.from, config.to, easedT);
+    }
+
     setCurrentPosition(pos);
     setProgress(t);
+    setTrailData({
+      from: config.from,
+      to: config.to,
+      rotationAxis: config.rotationAxis,
+      rotationAngle: config.rotationAngle,
+      easedProgress: easedT,
+    });
 
     // Animation complete
     if (t >= 1) {
@@ -132,7 +186,7 @@ export function useAnimation(): AnimationControls {
       if (config.onComplete) {
         config.onComplete();
         // Prevent double-commit if the user restarts this animation
-        config.onComplete = undefined as any; 
+        config.onComplete = undefined;
       }
 
       // Check if there are queued animations
@@ -157,6 +211,7 @@ export function useAnimation(): AnimationControls {
     progress,
     speed,
     currentPosition,
+    trailData,
     startAnimation,
     queueAnimations,
     play,

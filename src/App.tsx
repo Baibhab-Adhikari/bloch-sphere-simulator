@@ -19,6 +19,7 @@ import { GateHistory } from './components/Display/GateHistory';
 import { useQuantumSimulator } from './hooks/useQuantumSimulator';
 import { useAnimation } from './hooks/useAnimation';
 import { GATE_MATRICES } from './engine/gates';
+import { GATE_ROTATIONS } from './engine/gateRotations';
 import type { GateName, PresetName } from './types';
 
 function App() {
@@ -44,9 +45,13 @@ function App() {
       const targetState = nextState;
       currentState = nextState;
 
+      const rotation = GATE_ROTATIONS[gateName];
+
       return {
         from,
         to,
+        rotationAxis: rotation.axis,
+        rotationAngle: rotation.angle,
         onComplete: () => {
           simulator.commitState(targetState, gateName);
         },
@@ -164,6 +169,7 @@ function App() {
         <BlochSphereCanvas
           position={animation.currentPosition}
           animationUpdate={animation.update}
+          trailData={animation.trailData}
         />
       }
       rightPanel={

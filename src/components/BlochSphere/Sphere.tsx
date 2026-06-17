@@ -10,7 +10,7 @@ import * as THREE from 'three';
 
 export function Sphere() {
   // Sphere geometry (shared between surface and wireframe)
-  const sphereGeometry = useMemo(() => new THREE.SphereGeometry(1, 64, 48), []);
+  const sphereGeometry = useMemo(() => new THREE.SphereGeometry(1, 32, 24), []);
 
   // Equator ring
   const equatorPoints = useMemo(() => {
@@ -32,8 +32,8 @@ export function Sphere() {
   const gridLines = useMemo(() => {
     const lines: THREE.Vector3[][] = [];
 
-    // Longitude lines (meridians) — every 45°
-    for (let lon = 0; lon < 360; lon += 45) {
+    // Longitude lines (meridians) — every 90° (only 4 meridians)
+    for (let lon = 0; lon < 360; lon += 90) {
       const points: THREE.Vector3[] = [];
       const phi = (lon * Math.PI) / 180;
       for (let i = 0; i <= 64; i++) {
@@ -49,9 +49,8 @@ export function Sphere() {
       lines.push(points);
     }
 
-    // Latitude lines — every 45°
-    for (let lat = 45; lat < 180; lat += 45) {
-      if (lat === 90) continue; // Skip equator — it's drawn separately
+    // Latitude lines — only at 45° and 135°
+    for (const lat of [45, 135]) {
       const points: THREE.Vector3[] = [];
       const theta = (lat * Math.PI) / 180;
       const r = Math.sin(theta);
@@ -71,9 +70,9 @@ export function Sphere() {
       {/* Semi-transparent sphere surface */}
       <mesh geometry={sphereGeometry}>
         <meshPhysicalMaterial
-          color="#cbd5e1"
+          color="#e2e8f0"
           transparent
-          opacity={0.15}
+          opacity={0.12}
           roughness={0.8}
           metalness={0.1}
           side={THREE.DoubleSide}
@@ -81,13 +80,13 @@ export function Sphere() {
         />
       </mesh>
 
-      {/* Wireframe overlay */}
+      {/* Wireframe overlay — very subtle */}
       <mesh geometry={sphereGeometry}>
         <meshBasicMaterial
-          color="#64748b"
+          color="#94a3b8"
           wireframe
           transparent
-          opacity={0.2}
+          opacity={0.08}
         />
       </mesh>
 
@@ -103,14 +102,14 @@ export function Sphere() {
               ]}
             />
           </bufferGeometry>
-          <lineBasicMaterial color="#94a3b8" transparent opacity={0.3} />
+          <lineBasicMaterial color="#64748b" transparent opacity={0.45} />
         </line>
       ))}
 
       {/* Equator ring — highlighted */}
       {/* @ts-expect-error - R3F <line> clashes with React's SVG <line> type */}
       <line geometry={equatorGeometry}>
-        <lineBasicMaterial color="#0891b2" transparent opacity={0.6} linewidth={1} />
+        <lineBasicMaterial color="#0e7490" transparent opacity={0.9} linewidth={2} />
       </line>
     </group>
   );

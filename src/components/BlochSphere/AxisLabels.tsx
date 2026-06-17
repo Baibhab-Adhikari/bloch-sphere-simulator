@@ -17,14 +17,14 @@ interface LabelConfig {
 
 const LABELS: LabelConfig[] = [
   // Poles
-  { position: [0, 1.55, 0], text: '|0⟩', color: '#60a5fa', size: 15, isBasis: true },
-  { position: [0, -1.55, 0], text: '|1⟩', color: '#60a5fa', size: 15, isBasis: true },
+  { position: [0, 1.55, 0], text: '|0⟩', color: '#1d4ed8', size: 18, isBasis: true },
+  { position: [0, -1.55, 0], text: '|1⟩', color: '#1d4ed8', size: 18, isBasis: true },
 
   // Axes
-  { position: [1.55, 0, 0], text: 'X', color: '#ef4444', size: 13 },
-  { position: [-1.55, 0, 0], text: '-X', color: '#ef4444', size: 11 },
-  { position: [0, 0, 1.55], text: 'Y', color: '#22c55e', size: 13 },
-  { position: [0, 0, -1.55], text: '-Y', color: '#22c55e', size: 11 },
+  { position: [1.55, 0, 0], text: 'X', color: '#dc2626', size: 16 },
+  { position: [-1.55, 0, 0], text: '-X', color: '#dc2626', size: 14 },
+  { position: [0, 0, 1.55], text: 'Y', color: '#16a34a', size: 16 },
+  { position: [0, 0, -1.55], text: '-Y', color: '#16a34a', size: 14 },
 ];
 
 export function AxisLabels() {
@@ -42,12 +42,12 @@ export function AxisLabels() {
             style={{
               fontFamily: label.isBasis ? "'JetBrains Mono', monospace" : "'Inter', sans-serif",
               fontSize: `${label.size}px`,
-              fontWeight: label.isBasis ? 600 : 500,
+              fontWeight: 700,
               color: label.color,
-              textShadow: '0 0 10px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.5)',
+              textShadow: '0 1px 3px rgba(255,255,255,0.9), 0 0 8px rgba(255,255,255,0.6)',
               whiteSpace: 'nowrap',
               userSelect: 'none',
-              letterSpacing: label.isBasis ? '0.02em' : '0.05em',
+              letterSpacing: label.isBasis ? '0.02em' : '0.08em',
             }}
           >
             {label.text}

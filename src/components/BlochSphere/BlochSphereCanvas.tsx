@@ -12,15 +12,18 @@ import { Sphere } from './Sphere';
 import { StateVector } from './StateVector';
 import { Axes } from './Axes';
 import { AxisLabels } from './AxisLabels';
+import { TrajectoryTrail } from './TrajectoryTrail';
 import type { BlochCoordinates } from '../../types';
+import type { TrailData } from '../../hooks/useAnimation';
 
 interface BlochSphereCanvasProps {
   position: BlochCoordinates;
   animationUpdate: (deltaMs: number) => void;
+  trailData: TrailData | null;
 }
 
 /** Inner scene component that has access to useFrame */
-function Scene({ position, animationUpdate }: BlochSphereCanvasProps) {
+function Scene({ position, animationUpdate, trailData }: BlochSphereCanvasProps) {
   const lastTimeRef = useRef<number | null>(null);
 
   useFrame((state) => {
@@ -44,6 +47,7 @@ function Scene({ position, animationUpdate }: BlochSphereCanvasProps) {
       <Sphere />
       <Axes />
       <AxisLabels />
+      <TrajectoryTrail trailData={trailData} />
       <StateVector position={position} />
 
       {/* Orbit controls */}
@@ -59,7 +63,7 @@ function Scene({ position, animationUpdate }: BlochSphereCanvasProps) {
   );
 }
 
-export function BlochSphereCanvas({ position, animationUpdate }: BlochSphereCanvasProps) {
+export function BlochSphereCanvas({ position, animationUpdate, trailData }: BlochSphereCanvasProps) {
   return (
     <div className="w-full h-full" id="bloch-sphere-canvas">
       <Canvas
@@ -67,7 +71,7 @@ export function BlochSphereCanvas({ position, animationUpdate }: BlochSphereCanv
         gl={{ antialias: true, alpha: true }}
         style={{ background: 'transparent' }}
       >
-        <Scene position={position} animationUpdate={animationUpdate} />
+        <Scene position={position} animationUpdate={animationUpdate} trailData={trailData} />
       </Canvas>
     </div>
   );

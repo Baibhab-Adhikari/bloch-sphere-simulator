@@ -17,9 +17,9 @@ interface AxisConfig {
 const AXIS_LENGTH = 1.35;
 
 const AXES: AxisConfig[] = [
-  { direction: new THREE.Vector3(1, 0, 0), color: '#ef4444', opacity: 0.5 },  // X — red
-  { direction: new THREE.Vector3(0, 1, 0), color: '#3b82f6', opacity: 0.5 },  // Y (mapped to Z in Bloch) — blue
-  { direction: new THREE.Vector3(0, 0, 1), color: '#22c55e', opacity: 0.5 },  // Z (mapped to Y in Bloch) — green
+  { direction: new THREE.Vector3(1, 0, 0), color: '#dc2626', opacity: 1.0 },  // X — bold red
+  { direction: new THREE.Vector3(0, 1, 0), color: '#2563eb', opacity: 1.0 },  // Z-axis (vertical) — bold blue
+  { direction: new THREE.Vector3(0, 0, 1), color: '#16a34a', opacity: 1.0 },  // Y-axis (depth) — bold green
 ];
 
 export function Axes() {
@@ -45,14 +45,14 @@ export function Axes() {
 
           {/* Positive endpoint sphere */}
           <mesh position={direction.clone().multiplyScalar(AXIS_LENGTH)}>
-            <sphereGeometry args={[0.025, 16, 16]} />
-            <meshBasicMaterial color={color} transparent opacity={0.7} />
+            <sphereGeometry args={[0.035, 16, 16]} />
+            <meshBasicMaterial color={color} transparent opacity={1.0} />
           </mesh>
 
           {/* Negative endpoint sphere */}
           <mesh position={direction.clone().multiplyScalar(-AXIS_LENGTH)}>
-            <sphereGeometry args={[0.02, 16, 16]} />
-            <meshBasicMaterial color={color} transparent opacity={0.4} />
+            <sphereGeometry args={[0.028, 16, 16]} />
+            <meshBasicMaterial color={color} transparent opacity={0.7} />
           </mesh>
         </group>
       ))}

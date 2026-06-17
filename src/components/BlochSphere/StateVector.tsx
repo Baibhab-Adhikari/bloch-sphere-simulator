@@ -14,10 +14,10 @@ interface StateVectorProps {
   position: BlochCoordinates;
 }
 
-const ARROW_COLOR = '#06b6d4';
-const GLOW_COLOR = '#22d3ee';
-const SHAFT_RADIUS = 0.018;
-const HEAD_RADIUS = 0.055;
+const ARROW_COLOR = '#0891b2';
+const GLOW_COLOR = '#06b6d4';
+const SHAFT_RADIUS = 0.022;
+const HEAD_RADIUS = 0.06;
 const HEAD_LENGTH = 0.12;
 
 export function StateVector({ position }: StateVectorProps) {
