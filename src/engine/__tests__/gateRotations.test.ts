@@ -19,7 +19,7 @@ import type { GateName } from '../../types';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function expectBlochNear(actual: BlochCoordinates, expected: BlochCoordinates, label: string) {
+function expectBlochNear(actual: BlochCoordinates, expected: BlochCoordinates, _label: string) {
   expect(actual.x).toBeCloseTo(expected.x, 5);
   expect(actual.y).toBeCloseTo(expected.y, 5);
   expect(actual.z).toBeCloseTo(expected.z, 5);
